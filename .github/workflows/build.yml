@@ -1,18 +1,24 @@
-name: Build JAR
+name: Build Mod JAR
+
 on:
   workflow_dispatch:
   push:
-    branches: ["**"]
+    branches: [ "**" ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: |
-          if [ -f src.zip ]; then
-            mkdir -p src
-            unzip -o src.zip -d src_tmp
-            cp -rn src_tmp/* src/ || true
+          if [ -f "src.zip" ]; then
+            unzip -o src.zip -d src_temp
+            if [ -d "src_temp/src" ]; then
+              cp -rn src_temp/src/* src/ 2>/dev/null || cp -rn src_temp/src .
+            else
+              mkdir -p src
+              cp -rn src_temp/* src/
+            fi
           fi
       - uses: actions/setup-java@v4
         with:
